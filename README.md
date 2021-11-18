@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 usage: git [--version] [--help] [-C <path>] [-c <name>=<value>]
            [--exec-path[=<path>]] [--html-path] [--man-path] [--info-path]
            [-p | --paginate | -P | --no-pager] [--no-replace-objects] [--bare]
@@ -44,3 +45,7 @@ collaborate (see also: git help workflows)
 concept guides. See 'git help <command>' or 'git help <concept>'
 to read about a specific subcommand or concept.
 See 'git help git' for an overview of the system.
+=======
+# niche-website-server-side-Yeasin307
+niche-website-server-side-Yeasin307 created by GitHub Classroom
+>>>>>>> e839de41b4556632853fbcf7bfa8e819d256bb2e
