@@ -20,12 +20,12 @@ async function run() {
     try {
         await client.connect();
         const database = client.db('Apache-Bike-House');
-        const serviceCollection = database.collection('Products');
+        const productCollection = database.collection('Products');
         const userCollection = database.collection('Users');
         const orderCollection = database.collection('Orders');
 
         app.get('/explore', async (req, res) => {
-            const cursor = serviceCollection.find({});
+            const cursor = productCollection.find({});
             const users = await cursor.toArray();
             res.send(users);
         })
@@ -33,7 +33,7 @@ async function run() {
         app.get('/explore/:_id', async (req, res) => {
             const id = req.params._id;
             const query = { _id: ObjectId(id) };
-            const user = await serviceCollection.findOne(query);
+            const user = await productCollection.findOne(query);
             console.log('load user with id:', id);
             res.send(user);
         })
@@ -44,6 +44,12 @@ async function run() {
             const cursor = orderCollection.find(query);
             const orders = await cursor.toArray();
             res.json(orders);
+        })
+
+        app.get('/orders', async (req, res) => {
+            const cursor = productCollection.find({});
+            const users = await cursor.toArray();
+            res.send(users);
         })
 
         app.post('/users', async (req, res) => {
@@ -66,6 +72,20 @@ async function run() {
         app.post('/parchase', async (req, res) => {
             const newOrder = req.body;
             const result = await orderCollection.insertOne(newOrder);
+            res.json(result);
+        })
+
+        app.post('/product', async (req, res) => {
+            const newOrder = req.body;
+            const result = await productCollection.insertOne(newOrder);
+            res.json(result);
+        })
+
+        app.put('/users/admin', async (req, res) => {
+            const user = req.body;
+            const filter = { email: user.email };
+            const updateDoc = { $set: { role: 'admin' } };
+            const result = await userCollection.updateOne(filter, updateDoc);
             res.json(result);
         })
 
