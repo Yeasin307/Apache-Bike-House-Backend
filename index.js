@@ -30,6 +30,14 @@ async function run() {
             res.send(users);
         })
 
+        app.get('/explore/:_id', async (req, res) => {
+            const id = req.params._id;
+            const query = { _id: ObjectId(id) };
+            const user = await serviceCollection.findOne(query);
+            console.log('load user with id:', id);
+            res.send(user);
+        })
+
         app.post('/parchase', async (req, res) => {
             const newOrder = req.body;
             const result = await orderCollection.insertOne(newOrder);
