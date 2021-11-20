@@ -2,6 +2,7 @@ const express = require('express')
 const { MongoClient } = require('mongodb');
 const cors = require('cors');
 require('dotenv').config();
+const ObjectId = require('mongodb').ObjectId;
 
 const app = express()
 const port = process.env.PORT || 5000;
@@ -20,7 +21,8 @@ async function run() {
         await client.connect();
         const database = client.db('Apache-Bike-House');
         const serviceCollection = database.collection('Products');
-        const orderCollection = database.collection('Users');
+        const userCollection = database.collection('Users');
+        const orderCollection = database.collection('Orders');
 
         app.get('/explore', async (req, res) => {
             const cursor = serviceCollection.find({});
@@ -28,6 +30,11 @@ async function run() {
             res.send(users);
         })
 
+        app.post('/parchase', async (req, res) => {
+            const newOrder = req.body;
+            const result = await orderCollection.insertOne(newOrder);
+            res.json(result);
+        })
 
     }
     finally {
