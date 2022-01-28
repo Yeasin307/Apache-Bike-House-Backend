@@ -3,6 +3,7 @@ const { MongoClient } = require('mongodb');
 const cors = require('cors');
 require('dotenv').config();
 const ObjectId = require('mongodb').ObjectId;
+var admin = require("firebase-admin");
 
 const app = express()
 const port = process.env.PORT || 5000;
@@ -12,9 +13,29 @@ app.use(cors());
 app.use(express.json());
 
 
+var serviceAccount = require('./apache-bike-house-firebase-adminsdk-tse11-4c09d6eeac.json');
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+});
+
+
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.lcr1a.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
+async function verifyToken(req, res, next) {
+    if (req.headers?.authorization?.startsWith('Bearer ')) {
+        const idToken = req.headers.authorization.split('Bearer ')[1];
+        try {
+            const decodedUser = await admin.auth().verifyIdToken(idToken);
+            req.decodedUserEmail = decodedUser.email;
+        }
+        catch {
+
+        }
+    }
+    next();
+}
 
 async function run() {
     try {
@@ -39,12 +60,17 @@ async function run() {
             res.send(user);
         })
 
-        app.get('/orders', async (req, res) => {
+        app.get('/orders', verifyToken, async (req, res) => {
             const email = req.query.email;
-            const query = { email: email }
-            const cursor = orderCollection.find(query);
-            const orders = await cursor.toArray();
-            res.json(orders);
+            if (req.decodedUserEmail === email) {
+                const query = { email: email }
+                const cursor = orderCollection.find(query);
+                const orders = await cursor.toArray();
+                res.json(orders);
+            }
+            else {
+                res.status(401).json({ Message: 'User Not Authorized' })
+            }
         })
 
         app.get('/allorders', async (req, res) => {
