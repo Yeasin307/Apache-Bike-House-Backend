@@ -78,7 +78,7 @@ async function run() {
             res.json(order);
         })
 
-        app.get('/allorders', verifyToken, async (req, res) => {
+        app.get('/allorders', async (req, res) => {
             const cursor = orderCollection.find({});
             const users = await cursor.toArray();
             res.send(users);
