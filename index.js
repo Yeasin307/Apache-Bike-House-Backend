@@ -80,7 +80,7 @@ async function run() {
 
         app.get('/allorders', verifyToken, async (req, res) => {
             const email = req.query.email;
-            if (req.decodedUserEmail === email) {
+            if (email && req.decodedUserEmail === email) {
                 const cursor = orderCollection.find({});
                 const orders = await cursor.toArray();
                 res.json(orders);
