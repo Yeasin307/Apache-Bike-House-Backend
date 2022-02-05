@@ -5,7 +5,7 @@ require('dotenv').config();
 const ObjectId = require('mongodb').ObjectId;
 var admin = require("firebase-admin");
 
-const app = express()
+const app = express();
 const port = process.env.PORT || 5000;
 
 // Middle Ware
@@ -71,7 +71,14 @@ async function run() {
             }
         })
 
-        app.get('/allorders', async (req, res) => {
+        app.get('/orders/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const order = await orderCollection.findOne(query);
+            res.json(order);
+        })
+
+        app.get('/allorders', verifyToken, async (req, res) => {
             const cursor = orderCollection.find({});
             const users = await cursor.toArray();
             res.send(users);
