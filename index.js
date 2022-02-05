@@ -78,10 +78,16 @@ async function run() {
             res.json(order);
         })
 
-        app.get('/allorders', async (req, res) => {
-            const cursor = orderCollection.find({});
-            const users = await cursor.toArray();
-            res.send(users);
+        app.get('/allorders', verifyToken, async (req, res) => {
+            const email = req.query.email;
+            if (req.decodedUserEmail === email) {
+                const cursor = orderCollection.find({});
+                const orders = await cursor.toArray();
+                res.json(orders);
+            }
+            else {
+                res.status(401).json({ Message: 'User Not Admin' })
+            }
         })
 
         app.post('/users', async (req, res) => {
