@@ -12,19 +12,10 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+
 admin.initializeApp({
-    credential: admin.credential.cert({
-        type: process.env.type,
-        project_id: process.env.project_id,
-        private_key_id: process.env.private_key_id,
-        private_key: process.env.private_key,
-        client_email: process.env.client_email,
-        client_id: process.env.client_id,
-        auth_uri: process.env.auth_uri,
-        token_uri: process.env.token_uri,
-        auth_provider_x509_cert_url: process.env.auth_provider_x509_cert_url,
-        client_x509_cert_url: process.env.client_x509_cert_url
-    })
+    credential: admin.credential.cert(serviceAccount)
 });
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.lcr1a.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
