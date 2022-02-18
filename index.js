@@ -5,6 +5,7 @@ const ObjectId = require('mongodb').ObjectId;
 const admin = require("firebase-admin");
 require('dotenv').config();
 const stripe = require('stripe')(process.env.Stripe_Secret);
+const fileUpload = require('express-fileupload');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -12,6 +13,7 @@ const port = process.env.PORT || 5000;
 // Middle Ware
 app.use(cors());
 app.use(express.json());
+app.use(fileUpload());
 
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
 
@@ -128,8 +130,26 @@ async function run() {
         })
 
         app.post('/product', async (req, res) => {
-            const newOrder = req.body;
-            const result = await productCollection.insertOne(newOrder);
+            const name = req.body.name;
+            const feature1 = req.body.feature1;
+            const feature2 = req.body.feature2;
+            const feature3 = req.body.feature3;
+            const price = parseInt(req.body.price);
+            const pic = req.files.image;
+            const picData = pic.data;
+            const encodedPic = picData.toString('base64');
+            const imageBuffer = Buffer.from(encodedPic, 'base64');
+            const product = {
+                name,
+                description: {
+                    feature1,
+                    feature2,
+                    feature3
+                },
+                img: imageBuffer,
+                price
+            }
+            const result = await productCollection.insertOne(product);
             res.json(result);
         })
 
