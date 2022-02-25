@@ -153,6 +153,13 @@ async function run() {
             res.json(result);
         })
 
+        app.delete('/deleteproduct/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await productCollection.deleteOne(query);
+            res.json(result);
+        })
+
         app.post('/review', async (req, res) => {
             const newOrder = req.body;
             const result = await reviewCollection.insertOne(newOrder);
@@ -190,13 +197,6 @@ async function run() {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await orderCollection.deleteOne(query);
-            res.json(result);
-        })
-
-        app.delete('/deleteproduct/:id', async (req, res) => {
-            const id = req.params.id;
-            const query = { _id: ObjectId(id) };
-            const result = await productCollection.deleteOne(query);
             res.json(result);
         })
 
