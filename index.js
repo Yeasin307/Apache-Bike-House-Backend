@@ -135,10 +135,12 @@ async function run() {
             const feature2 = req.body.feature2;
             const feature3 = req.body.feature3;
             const price = parseInt(req.body.price);
+
             const pic = req.files.image;
             const picData = pic.data;
             const encodedPic = picData.toString('base64');
             const imageBuffer = Buffer.from(encodedPic, 'base64');
+
             const product = {
                 name,
                 description: {
@@ -161,8 +163,24 @@ async function run() {
         })
 
         app.post('/review', async (req, res) => {
-            const newOrder = req.body;
-            const result = await reviewCollection.insertOne(newOrder);
+            const name = req.body.name;
+            const email = req.body.email;
+            const rating = req.body.rating;
+            const comment = req.body.comment;
+
+            const pic = req.files.img;
+            const picData = pic.data;
+            const encodedPic = picData.toString('base64');
+            const imageBuffer = Buffer.from(encodedPic, 'base64');
+
+            const review = {
+                name,
+                email,
+                rating,
+                comment,
+                img: imageBuffer
+            }
+            const result = await reviewCollection.insertOne(review);
             res.json(result);
         })
 
